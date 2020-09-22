@@ -14,11 +14,14 @@ class AddNewNoteVC: UIViewController {
     
     // MARK: - Properties
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var nameView: UIView!
-    @IBOutlet weak var messageBodyView: UIView!
     
     @IBOutlet weak var noteNameTextField: UITextField!
     @IBOutlet weak var noteContentTextView: UITextView!
+    
+    @IBOutlet weak var noteNameView: UIView!
+    @IBOutlet weak var noteContentView: UIView!
+    
+    
     
     // Firestore database.
     let db = Firestore.firestore()
@@ -75,8 +78,8 @@ class AddNewNoteVC: UIViewController {
     func designSetup() {
         view.backgroundColor = UIColor(named: K.myColors.lightGrayBackground)
         
-        nameView.layer.cornerRadius = 10
-        messageBodyView.layer.cornerRadius = 10
+        noteNameView.layer.cornerRadius = 10
+        noteContentView.layer.cornerRadius = 10
         
         noteContentTextView.placeholder = "Add your note here."
     }

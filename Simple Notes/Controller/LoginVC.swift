@@ -51,7 +51,6 @@ class LoginVC: UIViewController {
                 } else {
                     // Succes login.
                     self.performSegue(withIdentifier: K.segues.loginComplete, sender: self)
-                    print("Login complete!")
                 }
             }
         }

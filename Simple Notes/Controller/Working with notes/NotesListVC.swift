@@ -14,10 +14,9 @@ class NotesListVC: UIViewController {
     
     // MARK: - Properties
     @IBOutlet weak var notesTableView: UITableView!
-    // Firestore database.
+    
     let db = Firestore.firestore()
     var selectedIndexPath = 0 // value for 'Prepare for segue' method.
-    
     var notesData: [Note] = []
     
     
