@@ -10,7 +10,7 @@ import Foundation
 
 struct Note {
     let noteName: String
-    let noteBody: String
-    let noteDate: String
-    let noteId: String
+    let noteContent: String
+    let noteDate: String?
+    let noteId: String?
 }

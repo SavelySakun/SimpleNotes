@@ -15,7 +15,7 @@ class NotesListVC: UIViewController {
     // MARK: - Properties
     @IBOutlet weak var notesTableView: UITableView!
     
-    let db = Firestore.firestore()
+    let databaseFirestore = Firestore.firestore()
     var selectedIndexPath = 0 // value for 'Prepare for segue' method.
     var notesData: [Note] = []
     
@@ -41,52 +41,31 @@ class NotesListVC: UIViewController {
         notesTableView.register(UINib(nibName: K.cell.cellNibName, bundle: nil), forCellReuseIdentifier: K.cell.cellIdentifier)
     }
     
-    // MARK: - Setup data for tableView.
     func setupDataFromFireBaseForTableView() {
-        
-        // Reloading data for tableView before loading data from Firestore.
-        DispatchQueue.main.async {
-            self.notesTableView.reloadData()
-        }
         
         notesData = []
         
-        let currentUserEmail = Auth.auth().currentUser?.email
-        
-        db.collection(K.FStore.usersCollection).document(currentUserEmail!).collection(K.FStore.notesCollection)
-            .order(by: K.FStore.dateForSorting, descending: true) // Order data by 'dateForSorting'
-            .getDocuments { (querySnapshot, error) in
-                
-                if let error = error {
-                    print(error)
-                } else {
-                    if let notesDataFromFirestore = querySnapshot?.documents {
-                        
-                        for note in notesDataFromFirestore {
-                            let dataFromNote = note.data()
-                            
-                            // Setting data to note from every piece from database.
-                            if let noteName = dataFromNote[K.FStore.noteName] as? String,
-                                let noteContent = dataFromNote[K.FStore.noteContent] as? String,
-                                let date = dataFromNote[K.FStore.date] as? String,
-                                let noteId = dataFromNote[K.FStore.noteId] as? String {
-                                
-                                // Adding data to array.
-                                let newNote = Note(noteName: noteName, noteBody: noteContent, noteDate: date, noteId: noteId)
-                                self.notesData.append(newNote)
-                                
-                                // Reloading data for tableView after load data from FIrestore to array 'notesData'.
-                                DispatchQueue.main.async {
-                                    self.notesTableView.reloadData()
-                                }
-                                
-                            }
-                            
-                        }
-                        
-                    }
+        DispatchQueue.global(qos: .utility).async {
+            FirebaseService.shared.retrieveNoteListFromFirebase { result in
+                switch result {
+                case .success(let notes):
+                    
+                    self.notesData = notes
+                    DispatchQueue.main.async { self.notesTableView.reloadData() }
+                    
+                case .failure(_):
+                    self.showErrorAlert()
+                    break
                 }
+            }
         }
+    }
+    
+    func showErrorAlert() {
+        let alert = UIAlertController(title: "Error", message: "Failure with loading notes from Database", preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        self.present(alert, animated: true)
     }
 }
 
@@ -152,7 +131,7 @@ extension NotesListVC: UITableViewDataSource {
         let note = notesData[indexPath.row]
         
         cell.noteName.text = note.noteName
-        cell.noteBody.text = note.noteBody
+        cell.noteBody.text = note.noteContent
         cell.noteDate.text = note.noteDate
         
         return cell
@@ -172,7 +151,9 @@ extension NotesListVC: UITableViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == K.segues.openNote {
             let destinationVC = segue.destination as! ReadNoteVC
-            destinationVC.noteId = notesData[selectedIndexPath].noteId
+            
+            guard let noteId = notesData[selectedIndexPath].noteId else { return }
+            destinationVC.noteId = noteId
         }
     }
 }

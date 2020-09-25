@@ -49,29 +49,22 @@ class AddNewNoteVC: UIViewController {
         } else {
             titleLabel.text = "Editing note"
             
-            if let currentUserEmail = Auth.auth().currentUser?.email {
-                db.collection(K.FStore.usersCollection).document(currentUserEmail).collection(K.FStore.notesCollection).document(noteId)
-                    .getDocument { (documentSnapshot, error) in
+            DispatchQueue.global(qos: .utility).async {
+                
+                FirebaseService.shared.retrieveNoteFromFirebase(with: self.noteId) { (result) in
+                    switch result {
+                    case .success(let note):
                         
-                        if let error = error {
-                            print(error.localizedDescription)
-                        } else {
-                            
-                            if let noteData = documentSnapshot?.data() {
-                                
-                                if let noteNameData = noteData[K.FStore.noteName] as? String,
-                                    let noteContentData = noteData[K.FStore.noteContent] as? String {
-                                    
-                                    // Set data from firestore to fields.
-                                    self.noteContentTextView.text = noteContentData
-                                    self.noteNameTextField.text = noteNameData
-                                    
-                                }
-                            }
+                        DispatchQueue.main.async {
+                            self.noteContentTextView.text = note.noteContent
+                            self.noteNameTextField.text = note.noteName
                         }
+    
+                    case .failure(_):
+                        break
+                    }
                 }
             }
-            
         }
     }
     
@@ -143,7 +136,6 @@ class AddNewNoteVC: UIViewController {
         
     }
     
-    // Saving data to Firestore.
     func saveDataToFirestoreUser() {
         if noteId == K.empty {
             createNewNoteDocument()
