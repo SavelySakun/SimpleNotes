@@ -12,19 +12,14 @@ import UITextView_Placeholder
 
 class AddNewNoteVC: UIViewController {
     
+    
     // MARK: - Properties
     @IBOutlet weak var titleLabel: UILabel!
-    
     @IBOutlet weak var noteNameTextField: UITextField!
     @IBOutlet weak var noteContentTextView: UITextView!
-    
     @IBOutlet weak var noteNameView: UIView!
     @IBOutlet weak var noteContentView: UIView!
     
-    
-    
-    // Firestore database.
-    let db = Firestore.firestore()
     var noteId = K.empty
     
     
@@ -42,7 +37,25 @@ class AddNewNoteVC: UIViewController {
         navigationBarSetup()
     }
     
+    
     // MARK: - Helpers
+    
+    // Design
+    func designSetup() {
+        view.backgroundColor = UIColor(named: K.myColors.lightGrayBackground)
+        noteNameView.layer.cornerRadius = 10
+        noteContentView.layer.cornerRadius = 10
+        noteContentTextView.placeholder = "Add your note here."
+    }
+    
+    func navigationBarSetup() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Discard", style: .done, target: self, action: #selector(handleTapInDiscardEditingButton))
+        navigationItem.leftBarButtonItem?.tintColor = .systemRed
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(handleTapOnSaveNoteButton))
+    }
+    
+    
+    // All work with Firestore methods.
     func fetchDataFromFirestoreIfNeeded() {
         if noteId == K.empty {
             return
@@ -68,40 +81,71 @@ class AddNewNoteVC: UIViewController {
         }
     }
     
-    func designSetup() {
-        view.backgroundColor = UIColor(named: K.myColors.lightGrayBackground)
-        
-        noteNameView.layer.cornerRadius = 10
-        noteContentView.layer.cornerRadius = 10
-        
-        noteContentTextView.placeholder = "Add your note here."
+    func saveDataToFirestoreUser() {
+        if noteId == K.empty {
+            createNewNoteDocument()
+        } else {
+            updateExistingNote()
+        }
     }
     
-    func navigationBarSetup() {
+    fileprivate func createNewNoteDocument() {
         
-        // leftBarButtonItem
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Discard", style: .done, target: self, action: #selector(discardEditing))
-        navigationItem.leftBarButtonItem?.tintColor = .systemRed
+        guard let noteName = noteNameTextField.text else { return }
+        guard let noteContent = noteContentTextView.text else { return }
         
-        // rightBarButtonItem
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveNewNote))
+        FirebaseService.shared.loadNewNoteToFirebase(noteName: noteName, noteContent: noteContent) { (error) in
+            if let error = error {
+                self.showHandleErrorSavingToFirestoreAlert(error: error)
+            } else {
+                self.navigationController?.popViewController(animated: true)?
+                .dismiss(animated: true, completion: nil)
+            }
+        }
+    }
+    
+    func updateExistingNote() {
+        
+        guard let noteName = noteNameTextField.text,
+            let noteContent = noteContentTextView.text else { return }
+        
+        FirebaseService.shared.updateExistingNoteOnFirebase(noteId: self.noteId, noteName: noteName, noteContent: noteContent) { error in
+            
+            if let error = error {
+                self.showHandleErrorSavingToFirestoreAlert(error: error)
+            } else {
+                self.navigationController?.popViewController(animated: true)?
+                .dismiss(animated: true, completion: nil)
+            }
+        }
     }
     
     
-    // Сhecks whether there is content in the fields. If not, it dismiss view. If yes, show alert.
-    @objc func discardEditing() {
+    // Selectors
+    @objc func handleTapInDiscardEditingButton() {
         if noteNameTextField.text!.isEmpty, noteContentTextView.text!.isEmpty {
             
             self.navigationController?.popViewController(animated: true)
             self.dismiss(animated: true, completion: nil)
             
         } else {
-            discardEditingAlert()
+            showFindContentSureToDiscardAlert()
         }
     }
     
-    // Alert for discard.
-    func discardEditingAlert() {
+    
+    @objc func handleTapOnSaveNoteButton() {
+        
+        if noteNameTextField.text!.isEmpty, noteContentTextView.text!.isEmpty {
+            showAlertIfNothingToSave()
+        } else {
+            saveDataToFirestoreUser()
+        }
+    }
+    
+    
+    // Alerts & Error handling.
+    func showFindContentSureToDiscardAlert() {
         
         let alert = UIAlertController(title: "Are you sure?", message: "Do you really want to dismiss any changes?", preferredStyle: .alert)
         
@@ -116,112 +160,19 @@ class AddNewNoteVC: UIViewController {
         self.present(alert, animated: true)
     }
     
-    // Tap on 'Save' button.
-    @objc func saveNewNote() {
-        
-        if noteNameTextField.text!.isEmpty, noteContentTextView.text!.isEmpty {
-            showAlertIfNothingToSave()
-        } else {
-            saveDataToFirestoreUser()
-        }
-    }
-    
-    
     func showAlertIfNothingToSave() {
-        
         let alert = UIAlertController(title: "Nothing to save", message: "Please add content to your note.", preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil ))
         self.present(alert, animated: true)
-        
     }
     
-    func saveDataToFirestoreUser() {
-        if noteId == K.empty {
-            createNewNoteDocument()
-        } else {
-            updateExistingNote()
-        }
-    }
-    
-    func updateExistingNote() {
-        let currentUserEmail = Auth.auth().currentUser?.email
-        let dateForSorting = Date().timeIntervalSince1970
+    func showHandleErrorSavingToFirestoreAlert(error: Error) {
         
-        if let noteName = noteNameTextField.text, let noteContent = noteContentTextView.text, let userEmail = currentUserEmail {
-            
-            db.collection(K.FStore.usersCollection).document(userEmail).collection(K.FStore.notesCollection).document(noteId)
-                .updateData([
-                    
-                    K.FStore.noteName : noteName,
-                    K.FStore.noteContent : noteContent,
-                    K.FStore.dateForSorting : dateForSorting,
-                    K.FStore.date : getCurrentDateAndReturnString(),
-                    
-                ]) { (error) in
-                    
-                    if let errorText = error {
-                        self.showAlertErrorWhileSavingToFirebase(error: errorText)
-                    } else {
-                        self.navigationController?.popViewController(animated: true)?
-                            .dismiss(animated: true, completion: nil)
-                    }
-            }
-        }
-        
-    }
-    
-    fileprivate func createNewNoteDocument() {
-        
-        let dateForSorting = Date().timeIntervalSince1970
-        let currentUserEmail = Auth.auth().currentUser?.email
-        
-        // Getting random number for note id.
-        let randomNumberForNoteId = String(Int.random(in: 1...9999) + Int.random(in: 1...9999))
-        
-        if let noteName = noteNameTextField.text, let noteContent = noteContentTextView.text, let userEmail = currentUserEmail {
-            
-            db.collection(K.FStore.usersCollection).document(userEmail).collection(K.FStore.notesCollection).document(randomNumberForNoteId)
-                .setData([
-                    
-                    K.FStore.noteName : noteName,
-                    K.FStore.noteContent : noteContent,
-                    K.FStore.dateForSorting : dateForSorting,
-                    K.FStore.date : getCurrentDateAndReturnString(),
-                    K.FStore.noteId : randomNumberForNoteId
-                    
-                ]) { (error) in
-                    
-                    if let errorText = error {
-                        self.showAlertErrorWhileSavingToFirebase(error: errorText)
-                    } else {
-                        self.navigationController?.popViewController(animated: true)?
-                            .dismiss(animated: true, completion: nil)
-                    }
-            }
-        }
-    }
-    
-    func showAlertErrorWhileSavingToFirebase(error: Error) {
-        
-        let alert = UIAlertController(title: "Here is the Error", message: "\(error.localizedDescription)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Error", message: "\(error.localizedDescription)", preferredStyle: .alert)
         
         // Return to 'NotesListVC'.
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil ))
         self.present(alert, animated: true)
-    }
-    
-    // Recieve current date and convert it into nice String.
-    func getCurrentDateAndReturnString() -> String {
-        
-        let date = Date()
-        let calendar = Calendar.current
-        
-        let currentDay = calendar.component(.day, from: date)
-        let currentMonth = calendar.component(.month, from: date)
-        let currentYear = calendar.component(.year, from: date)
-        
-        let formattedCurrentDate = "\(currentDay).\(currentMonth).\(currentYear)"
-        return formattedCurrentDate
     }
 }

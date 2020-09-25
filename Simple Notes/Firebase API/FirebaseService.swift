@@ -12,14 +12,13 @@ import Firebase
 
 class FirebaseService {
     
-    init() {}
-    
     static let shared = FirebaseService()
     let firestoreModel = FirestoreModel()
     let databaseFirestore = Firestore.firestore()
     let currentUserEmail = Auth.auth().currentUser?.email
+    let currentDate = HelperMethod.shared.getCurrentDateAndReturnString()
     
-    func retrieveNoteListFromFirebase(completion: @escaping (Result<[Note], Error>) -> ()) {
+    func retrieveNoteListFromFirebase(completion: @escaping (Result<[Note], Error>) -> Void) {
         
         var notesData: [Note] = []
         
@@ -59,7 +58,7 @@ class FirebaseService {
         }
     }
     
-    func retrieveNoteFromFirebase(with noteId: String, completion: @escaping (Result<Note, Error>) -> ()) {
+    func retrieveNoteFromFirebase(with noteId: String, completion: @escaping (Result<Note, Error>) -> Void) {
         
         guard let currentUserEmail = currentUserEmail else { return }
         
@@ -83,5 +82,53 @@ class FirebaseService {
                 completion(.success(completeNoteData))
         }
     }
+    
+    func loadNewNoteToFirebase(noteName: String, noteContent: String, completion: @escaping (Error?) -> Void) {
+        
+        let dateForSorting = Date().timeIntervalSince1970
+        let uniqueNumberForNoteId = HelperMethod.shared.generateUniqueId()
+        guard let currentUserEmail = currentUserEmail else { return }
+        
+        databaseFirestore
+            .collection(firestoreModel.usersCollection)
+            .document(currentUserEmail)
+            .collection(firestoreModel.notesCollection)
+            .document(uniqueNumberForNoteId)
+            .setData([
+                
+                firestoreModel.noteName: noteName,
+                firestoreModel.noteContent: noteContent,
+                firestoreModel.dateForSorting: dateForSorting,
+                firestoreModel.date: currentDate,
+                firestoreModel.noteId: uniqueNumberForNoteId
+                
+            ]) { error in
+                completion(error)
+        }
+    }
+    
+    func updateExistingNoteOnFirebase(noteId: String, noteName: String, noteContent: String, completion: @escaping (Error?) -> Void) {
+        
+        let dateForSorting = Date().timeIntervalSince1970
+        guard let currentUserEmail = currentUserEmail else { return }
+        
+        databaseFirestore
+            .collection(firestoreModel.usersCollection)
+            .document(currentUserEmail)
+            .collection(firestoreModel.notesCollection)
+            .document(noteId)
+            .updateData([
+                
+                firestoreModel.noteName: noteName,
+                firestoreModel.noteContent: noteContent,
+                firestoreModel.dateForSorting: dateForSorting,
+                firestoreModel.date: currentDate,
+                
+            ]) { error in
+                completion(error)
+        }
+    }
+    
 }
+
 
