@@ -17,13 +17,13 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Body." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C3D-4R-U7U">
-                        <rect key="frame" x="10" y="40.5" width="377" height="46.5"/>
+                        <rect key="frame" x="20" y="40.5" width="367" height="46.5"/>
                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="or7-MU-5og" userLabel="Date &amp; name stack">
-                        <rect key="frame" x="10" y="10" width="377" height="20.5"/>
+                        <rect key="frame" x="20" y="10" width="367" height="20.5"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cP5-4Y-UMt">
                                 <rect key="frame" x="0.0" y="0.0" width="70" height="20.5"/>
@@ -35,7 +35,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0cI-ed-PLp">
-                                <rect key="frame" x="80" y="0.0" width="297" height="20.5"/>
+                                <rect key="frame" x="80" y="0.0" width="287" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -45,9 +45,9 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="or7-MU-5og" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="Kza-TG-sdl"/>
-                    <constraint firstItem="or7-MU-5og" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="VZZ-gk-fMd"/>
+                    <constraint firstItem="or7-MU-5og" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="VZZ-gk-fMd"/>
                     <constraint firstAttribute="bottom" secondItem="C3D-4R-U7U" secondAttribute="bottom" constant="10" id="eOx-3F-hSe"/>
-                    <constraint firstItem="C3D-4R-U7U" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="m9b-Ym-py7"/>
+                    <constraint firstItem="C3D-4R-U7U" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="m9b-Ym-py7"/>
                     <constraint firstItem="C3D-4R-U7U" firstAttribute="top" secondItem="or7-MU-5og" secondAttribute="bottom" constant="10" id="pFP-Vn-0GD"/>
                     <constraint firstAttribute="trailing" secondItem="C3D-4R-U7U" secondAttribute="trailing" constant="10" id="rS4-u7-Zcy"/>
                     <constraint firstAttribute="trailing" secondItem="or7-MU-5og" secondAttribute="trailing" constant="10" id="zJg-W7-x5y"/>

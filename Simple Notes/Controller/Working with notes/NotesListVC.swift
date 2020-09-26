@@ -14,9 +14,7 @@ class NotesListVC: UIViewController {
     
     // MARK: - Properties
     @IBOutlet weak var notesTableView: UITableView!
-    
-    let databaseFirestore = Firestore.firestore()
-    var selectedIndexPath = 0 // value for 'Prepare for segue' method.
+    var selectedIndexPath = 0
     var notesData: [Note] = []
     
     
@@ -24,7 +22,7 @@ class NotesListVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super .viewWillAppear(true)
         navigationBarSetup()
-        setupDataFromFireBaseForTableView()
+        loadNotesFromFirebaseToTableView()
     }
     
     override func viewDidLoad() {
@@ -33,15 +31,40 @@ class NotesListVC: UIViewController {
         registerCustomCellAndDataSource()
     }
     
+    
     // MARK: - Helpers
-    func registerCustomCellAndDataSource() {
+    
+    // Design.
+    func navigationBarSetup() {
         
+        navigationItem.title = "Notes"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log out", style: .done, target: self, action: #selector(userSignOut))
+        navigationItem.leftBarButtonItem?.tintColor = .systemRed
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(sequeToAddNewNote))
+    }
+    
+    func registerCustomCellAndDataSource() {
         notesTableView.delegate = self
         notesTableView.dataSource = self
         notesTableView.register(UINib(nibName: K.cell.cellNibName, bundle: nil), forCellReuseIdentifier: K.cell.cellIdentifier)
     }
     
-    func setupDataFromFireBaseForTableView() {
+    
+    // Selectors
+    @objc func userSignOut() {
+        showLogoutConfirmationAlert()
+    }
+    
+    @objc func sequeToAddNewNote() {
+        performSegue(withIdentifier: K.segues.addNewNoteStart, sender: self)
+    }
+    
+    
+    // All work with Firestore methods.
+    func loadNotesFromFirebaseToTableView() {
+        
+        DispatchQueue.main.async { self.notesTableView.reloadData() }
         
         notesData = []
         
@@ -61,53 +84,7 @@ class NotesListVC: UIViewController {
         }
     }
     
-    func showErrorAlert() {
-        let alert = UIAlertController(title: "Error", message: "Failure with loading notes from Database", preferredStyle: .alert)
-
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        self.present(alert, animated: true)
-    }
-}
-
-// MARK: - 'navigationBarSetup()' (with alerts and sign out method)
-extension NotesListVC {
-    
-    func navigationBarSetup() {
-        
-        navigationItem.title = "Your notes"
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log out", style: .done, target: self, action: #selector(userSignOut))
-        navigationItem.leftBarButtonItem?.tintColor = .systemRed
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(sequeToAddNewNote))
-    }
-    
-    // Sign out method for left button of navigation controller.
-    @objc func userSignOut() {
-        logOutConfirmationAlert()
-    }
-    
-    // Just a simple segue to AddNewNoteVC.
-    @objc func sequeToAddNewNote() {
-        performSegue(withIdentifier: K.segues.addNewNoteStart, sender: self)
-    }
-    
-    // Shows when user tap on 'Log out' leftBarItem.
-    func logOutConfirmationAlert() {
-        
-        let alert = UIAlertController(title: "Do you really want to log out?", message: "Press 'Log out' to end session.", preferredStyle: .alert)
-        
-        alert.addAction(UIAlertAction(title: "Log out", style: .default, handler: { action in
-            // Action for leftBarItem from alert
-            self.signOutFirebase()
-        }))
-        
-        alert.addAction(UIAlertAction(title: "Return", style: .default, handler: nil))
-        self.present(alert, animated: true)
-    }
-    
-    // User sign out.
-    func signOutFirebase() {
+    func handleSignOutFirebase() {
         do {
             try Auth.auth().signOut()
             navigationController?.popToRootViewController(animated: true)
@@ -115,7 +92,30 @@ extension NotesListVC {
             print ("Error signing out: %@", signOutError.localizedDescription)
         }
     }
+    
+    
+    // Alerts.
+    func showErrorAlert() {
+        let alert = UIAlertController(title: "Error", message: "Failure with loading notes from Database", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
+    func showLogoutConfirmationAlert() {
+        
+        let alert = UIAlertController(title: "Do you really want to log out?", message: "Press 'Log out' to end session.", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Log out", style: .default, handler: { action in
+            self.handleSignOutFirebase()
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Return", style: .default, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
 }
+
 
 // MARK: - TableView Setup
 extension NotesListVC: UITableViewDataSource {
@@ -129,7 +129,6 @@ extension NotesListVC: UITableViewDataSource {
         let cell = notesTableView.dequeueReusableCell(withIdentifier: K.cell.cellIdentifier, for: indexPath) as! NotesListCell
         
         let note = notesData[indexPath.row]
-        
         cell.noteName.text = note.noteName
         cell.noteBody.text = note.noteContent
         cell.noteDate.text = note.noteDate
@@ -138,16 +137,14 @@ extension NotesListVC: UITableViewDataSource {
     }
 }
 
-// MARK: - UITableViewDelegate. All methods for segue.
+// MARK: - UITableViewDelegate.
 extension NotesListVC: UITableViewDelegate {
     
-    // Tap on cell.
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedIndexPath = indexPath.row
         performSegue(withIdentifier: K.segues.openNote, sender: self)
     }
     
-    // This method pass 'noteId' value to ReadNoteVC.
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == K.segues.openNote {
             let destinationVC = segue.destination as! ReadNoteVC

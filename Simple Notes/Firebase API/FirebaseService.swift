@@ -15,14 +15,32 @@ class FirebaseService {
     static let shared = FirebaseService()
     let firestoreModel = FirestoreModel()
     let databaseFirestore = Firestore.firestore()
-    let currentUserEmail = Auth.auth().currentUser?.email
     let currentDate = HelperMethod.shared.getCurrentDateAndReturnString()
+    
+    func registerNewUser(email: String, password: String, completion: @escaping (Error?, AuthDataResult?) -> Void) {
+        
+        DispatchQueue.global(qos: .utility).async {
+            Auth.auth().createUser(withEmail: email, password: password) { (authDataResult, error) in
+            completion(error, authDataResult)}
+        }
+    }
+    
+    func loginExistingUser(email: String, password: String, completion: @escaping (Error?, AuthDataResult?) -> Void) {
+        
+        DispatchQueue.global(qos: .utility).async {
+            Auth.auth().signIn(withEmail: email, password: password) { (authDataResult, error) in
+                completion(error, authDataResult)
+            }
+        }
+    }
+    
     
     func retrieveNoteListFromFirebase(completion: @escaping (Result<[Note], Error>) -> Void) {
         
+        let userEmail = Auth.auth().currentUser?.email
         var notesData: [Note] = []
         
-        guard let currentUserEmail = currentUserEmail else { return }
+        guard let currentUserEmail = userEmail else { return }
         
         databaseFirestore
             .collection(firestoreModel.usersCollection)
@@ -60,7 +78,8 @@ class FirebaseService {
     
     func retrieveNoteFromFirebase(with noteId: String, completion: @escaping (Result<Note, Error>) -> Void) {
         
-        guard let currentUserEmail = currentUserEmail else { return }
+        let userEmail = Auth.auth().currentUser?.email
+        guard let currentUserEmail = userEmail else { return }
         
         databaseFirestore
             .collection(firestoreModel.usersCollection)
@@ -85,9 +104,10 @@ class FirebaseService {
     
     func loadNewNoteToFirebase(noteName: String, noteContent: String, completion: @escaping (Error?) -> Void) {
         
+        let userEmail = Auth.auth().currentUser?.email
         let dateForSorting = Date().timeIntervalSince1970
         let uniqueNumberForNoteId = HelperMethod.shared.generateUniqueId()
-        guard let currentUserEmail = currentUserEmail else { return }
+        guard let currentUserEmail = userEmail else { return }
         
         databaseFirestore
             .collection(firestoreModel.usersCollection)
@@ -109,8 +129,9 @@ class FirebaseService {
     
     func updateExistingNoteOnFirebase(noteId: String, noteName: String, noteContent: String, completion: @escaping (Error?) -> Void) {
         
+        let userEmail = Auth.auth().currentUser?.email
         let dateForSorting = Date().timeIntervalSince1970
-        guard let currentUserEmail = currentUserEmail else { return }
+        guard let currentUserEmail = userEmail else { return }
         
         databaseFirestore
             .collection(firestoreModel.usersCollection)
@@ -127,6 +148,19 @@ class FirebaseService {
             ]) { error in
                 completion(error)
         }
+    }
+    
+    func deleteNote(with noteId: String) {
+        
+        let userEmail = Auth.auth().currentUser?.email
+        guard let currentUserEmail = userEmail else { return }
+        
+        databaseFirestore
+            .collection(firestoreModel.usersCollection)
+            .document(currentUserEmail)
+            .collection(firestoreModel.notesCollection)
+            .document(noteId)
+            .delete()
     }
     
 }

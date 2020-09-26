@@ -13,7 +13,6 @@ class ReadNoteVC: UIViewController {
     
     // MARK: - Properties.
     var noteId = K.empty // Note id for Firestore.
-    let db = Firestore.firestore()
     
     @IBOutlet weak var noteNameLabel: UILabel!
     @IBOutlet weak var noteDateLabel: UILabel!
@@ -38,12 +37,9 @@ class ReadNoteVC: UIViewController {
 extension ReadNoteVC {
     
     func navigationBarSetup() {
-        
         let delete = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(deleteCurrentNote))
         let edit = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(editCurrentNote))
-        
         delete.tintColor = .red
-        
         navigationItem.rightBarButtonItems = [edit, delete]
     }
     
@@ -51,25 +47,24 @@ extension ReadNoteVC {
         
         let alert = UIAlertController(title: "Are you sure?", message: "Press 'Delete' to proceed.", preferredStyle: .alert)
         
-        // Return to 'NotesListVC'.
         alert.addAction(UIAlertAction(title: "Return", style: .default, handler: nil))
         alert.addAction(UIAlertAction(title: "Delete", style: .default, handler: { action in
             
-            if let currentUserEmail = Auth.auth().currentUser?.email {
-                self.db.collection(K.FStore.usersCollection).document(currentUserEmail).collection(K.FStore.notesCollection).document(self.noteId)
-                    .delete()
+            DispatchQueue.global(qos: .utility).async {
+                FirebaseService.shared.deleteNote(with: self.noteId)
             }
+            
             self.navigationController?.popViewController(animated: true)?
-            .dismiss(animated: true, completion: nil)
+                .dismiss(animated: true, completion: nil)
             
         } ))
         self.present(alert, animated: true)
-        
     }
     
     @objc func editCurrentNote() {
         performSegue(withIdentifier: K.segues.editExistingNote, sender: self)
     }
+    
     // This method pass 'noteId' value to 'AddNewNoteVC'.
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == K.segues.editExistingNote {
@@ -84,33 +79,22 @@ extension ReadNoteVC {
     
     func getDataFromFirestore() {
         
-        if let currentUserEmail = Auth.auth().currentUser?.email {
+        DispatchQueue.global(qos: .utility).async {
             
-            db.collection(K.FStore.usersCollection).document(currentUserEmail).collection(K.FStore.notesCollection).document(noteId)
-                .addSnapshotListener { (documentSnapshot, error) in
+            FirebaseService.shared.retrieveNoteFromFirebase(with: self.noteId) { result in
+                switch result {
+                case .success(let note):
                     
-                    if let error = error {
-                        print(error.localizedDescription)
-                    } else {
-                        
-                        if let noteData = documentSnapshot?.data() {
-                            
-                            if let noteNameData = noteData[K.FStore.noteName] as? String,
-                                let noteContentData = noteData[K.FStore.noteContent] as? String,
-                                let noteDateData = noteData[K.FStore.date] as? String {
-                                
-                                // Set data from firestore to labels and textView.
-                                self.noteDateLabel.text = noteDateData
-                                self.noteNameLabel.text = noteNameData
-                                self.noteContentTextView.text = noteContentData
-                                
-                            }
-                            
-                        }
+                    DispatchQueue.main.async {
+                        self.noteDateLabel.text = note.noteDate
+                        self.noteNameLabel.text = note.noteName
+                        self.noteContentTextView.text = note.noteContent
                     }
+                    
+                case .failure(_):
+                    break
+                }
             }
         }
     }
-    
-    
 }

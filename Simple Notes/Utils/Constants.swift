@@ -25,15 +25,5 @@ struct K {
         static let cellNibName = "NotesListCell"
         static let cellIdentifier = "ReusableCell"
     }
-    
-    struct FStore {
-        static let usersCollection = "users"
-        static let notesCollection = "notes"
-        static let noteName = "note name"
-        static let noteContent = "note content"
-        static let date = "date"
-        static let dateForSorting = "date for sorting"
-        static let noteId = "id"
-    }
 
 }

@@ -64,17 +64,17 @@ class AddNewNoteVC: UIViewController {
             
             DispatchQueue.global(qos: .utility).async {
                 
-                FirebaseService.shared.retrieveNoteFromFirebase(with: self.noteId) { (result) in
+                FirebaseService.shared.retrieveNoteFromFirebase(with: self.noteId) { result in
                     switch result {
                     case .success(let note):
-                        
-                        DispatchQueue.main.async {
-                            self.noteContentTextView.text = note.noteContent
-                            self.noteNameTextField.text = note.noteName
-                        }
-    
+                    
+                    DispatchQueue.main.async {
+                    self.noteContentTextView.text = note.noteContent
+                    self.noteNameTextField.text = note.noteName
+                    }
+                    
                     case .failure(_):
-                        break
+                    break
                     }
                 }
             }
@@ -94,12 +94,15 @@ class AddNewNoteVC: UIViewController {
         guard let noteName = noteNameTextField.text else { return }
         guard let noteContent = noteContentTextView.text else { return }
         
-        FirebaseService.shared.loadNewNoteToFirebase(noteName: noteName, noteContent: noteContent) { (error) in
-            if let error = error {
-                self.showHandleErrorSavingToFirestoreAlert(error: error)
-            } else {
-                self.navigationController?.popViewController(animated: true)?
-                .dismiss(animated: true, completion: nil)
+        DispatchQueue.global(qos: .utility).async {
+            
+            FirebaseService.shared.loadNewNoteToFirebase(noteName: noteName, noteContent: noteContent) { error in
+                if let error = error {
+                    self.showHandleErrorSavingToFirestoreAlert(error: error)
+                } else {
+                    self.navigationController?.popViewController(animated: true)?
+                        .dismiss(animated: true, completion: nil)
+                }
             }
         }
     }
@@ -109,13 +112,16 @@ class AddNewNoteVC: UIViewController {
         guard let noteName = noteNameTextField.text,
             let noteContent = noteContentTextView.text else { return }
         
-        FirebaseService.shared.updateExistingNoteOnFirebase(noteId: self.noteId, noteName: noteName, noteContent: noteContent) { error in
+        DispatchQueue.global(qos: .utility).async {
             
-            if let error = error {
-                self.showHandleErrorSavingToFirestoreAlert(error: error)
-            } else {
-                self.navigationController?.popViewController(animated: true)?
-                .dismiss(animated: true, completion: nil)
+            FirebaseService.shared.updateExistingNoteOnFirebase(noteId: self.noteId, noteName: noteName, noteContent: noteContent) { error in
+                
+                if let error = error {
+                    self.showHandleErrorSavingToFirestoreAlert(error: error)
+                } else {
+                    self.navigationController?.popViewController(animated: true)?
+                        .dismiss(animated: true, completion: nil)
+                }
             }
         }
     }
@@ -150,8 +156,6 @@ class AddNewNoteVC: UIViewController {
         let alert = UIAlertController(title: "Are you sure?", message: "Do you really want to dismiss any changes?", preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
-            
-            // Actions for leftBarItem from alert
             self.navigationController?.popViewController(animated: true)
             self.dismiss(animated: true, completion: nil)
         }))
@@ -168,7 +172,6 @@ class AddNewNoteVC: UIViewController {
     }
     
     func showHandleErrorSavingToFirestoreAlert(error: Error) {
-        
         let alert = UIAlertController(title: "Error", message: "\(error.localizedDescription)", preferredStyle: .alert)
         
         // Return to 'NotesListVC'.

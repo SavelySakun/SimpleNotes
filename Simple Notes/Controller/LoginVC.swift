@@ -27,8 +27,8 @@ class LoginVC: UIViewController {
     }
     
     // MARK: - IBActions
-    @IBAction func tapLogin(_ sender: Any) {
-        login()
+    @IBAction func tapOnLoginButton(_ sender: Any) {
+        handleUserLogin()
     }
     
     // MARK: - Helpers
@@ -38,25 +38,20 @@ class LoginVC: UIViewController {
         loginButton.layer.cornerRadius = 10
     }
     
-    func login() {
-        
+    func handleUserLogin() {
         if let email = emailField.text, let password = passwordField.text {
             
-            Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-                
+            FirebaseService.shared.loginExistingUser(email: email, password: password) { error, result in
                 if let errorText = error {
-                    // Dealing with errors.
-                    self.errorWithLoginAlert(error: errorText)
-                    
+                    self.showErrorLoginAlert(error: errorText)
                 } else {
-                    // Succes login.
                     self.performSegue(withIdentifier: K.segues.loginComplete, sender: self)
                 }
             }
         }
     }
     
-    func errorWithLoginAlert(error: Error?) {
+    func showErrorLoginAlert(error: Error?) {
         
         let alert = UIAlertController(title: "Login Error", message: "\(error!.localizedDescription)", preferredStyle: .alert)
         

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class TitleVC: UIViewController {
     
@@ -15,13 +16,13 @@ class TitleVC: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
     
     
-    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
         designSetup()
     }
+    
     
     // MARK: - Helpers
     func designSetup() {

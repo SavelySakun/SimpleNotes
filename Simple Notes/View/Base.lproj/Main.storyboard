@@ -281,9 +281,9 @@
                                         <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <state key="normal" title="Register"/>
                                         <connections>
-                                            <action selector="tapLogin:" destination="Cza-Bq-Oie" eventType="touchUpInside" id="xqS-bJ-4gq"/>
+                                            <action selector="tapOnLoginButton:" destination="Cza-Bq-Oie" eventType="touchUpInside" id="xqS-bJ-4gq"/>
+                                            <action selector="tapOnRegisterButton:" destination="cL5-pO-Rli" eventType="touchUpInside" id="nCu-Jd-jpo"/>
                                             <action selector="tapRegister:" destination="BYZ-38-t0r" eventType="touchUpInside" id="DNR-y3-zDc"/>
-                                            <action selector="tapRegister:" destination="cL5-pO-Rli" eventType="touchUpInside" id="nCu-Jd-jpo"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -616,7 +616,7 @@
                                         <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <state key="normal" title="Login"/>
                                         <connections>
-                                            <action selector="tapLogin:" destination="Cza-Bq-Oie" eventType="touchUpInside" id="uZR-l7-7uo"/>
+                                            <action selector="tapOnLoginButton:" destination="Cza-Bq-Oie" eventType="touchUpInside" id="uZR-l7-7uo"/>
                                             <action selector="tapRegister:" destination="BYZ-38-t0r" eventType="touchUpInside" id="W7h-B0-bHa"/>
                                         </connections>
                                     </button>
@@ -999,7 +999,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Klt-SC-WFe"/>
+        <segue reference="daQ-Gc-KBG"/>
         <segue reference="uFF-cH-hcV"/>
     </inferredMetricsTieBreakers>
     <resources>
