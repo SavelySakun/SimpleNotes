@@ -21,13 +21,13 @@ class NotesListVC: UIViewController {
     // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
         super .viewWillAppear(true)
-        navigationBarSetup()
+        
         loadNotesFromFirebaseToTableView()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        navigationBarSetup()
         registerCustomCellAndDataSource()
     }
     

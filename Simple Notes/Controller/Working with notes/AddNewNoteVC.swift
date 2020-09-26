@@ -27,13 +27,13 @@ class AddNewNoteVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
-        designSetup()
         fetchDataFromFirestoreIfNeeded()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        designSetup()
         navigationBarSetup()
     }
     

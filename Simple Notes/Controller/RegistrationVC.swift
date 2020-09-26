@@ -33,6 +33,7 @@ class RegistrationVC: UIViewController {
     
     // MARK: - Helpers
     func designSetup() {
+        navigationItem.title = "Registration"
         emailView.layer.cornerRadius = 10
         passwordView.layer.cornerRadius = 10
         registerButton.layer.cornerRadius = 10

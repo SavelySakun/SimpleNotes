@@ -33,6 +33,7 @@ class LoginVC: UIViewController {
     
     // MARK: - Helpers
     func designSetup() {
+        navigationItem.title = "Login"
         emailView.layer.cornerRadius = 10
         passwordView.layer.cornerRadius = 10
         loginButton.layer.cornerRadius = 10

@@ -21,14 +21,14 @@ class ReadNoteVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
-        navigationBarSetup()
+        getDataFromFirestore()
     }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        getDataFromFirestore()
+        navigationBarSetup()
     }
     
 }
