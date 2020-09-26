@@ -24,6 +24,7 @@
 		C4850B96251DDFD600786BFF /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4850B95251DDFD600786BFF /* FirebaseService.swift */; };
 		C4850B98251DE27400786BFF /* FirestoreModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4850B97251DE27400786BFF /* FirestoreModel.swift */; };
 		C4850B9B251E42D900786BFF /* HelperMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4850B9A251E42D900786BFF /* HelperMethod.swift */; };
+		C4A3AFAC251F8AA600A95EFE /* KeyboardLayoutConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A3AFAB251F8AA600A95EFE /* KeyboardLayoutConstraint.swift */; };
 		C4BED5E324B77D4D00F73FEE /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BED5E224B77D4D00F73FEE /* Note.swift */; };
 		C4BED5E724B78B3000F73FEE /* AddNewNoteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BED5E624B78B3000F73FEE /* AddNewNoteVC.swift */; };
 		C4BED5E924B78B4600F73FEE /* ReadNoteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BED5E824B78B4600F73FEE /* ReadNoteVC.swift */; };
@@ -49,6 +50,7 @@
 		C4850B95251DDFD600786BFF /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
 		C4850B97251DE27400786BFF /* FirestoreModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreModel.swift; sourceTree = "<group>"; };
 		C4850B9A251E42D900786BFF /* HelperMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperMethod.swift; sourceTree = "<group>"; };
+		C4A3AFAB251F8AA600A95EFE /* KeyboardLayoutConstraint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardLayoutConstraint.swift; sourceTree = "<group>"; };
 		C4BED5E224B77D4D00F73FEE /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		C4BED5E624B78B3000F73FEE /* AddNewNoteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewNoteVC.swift; sourceTree = "<group>"; };
 		C4BED5E824B78B4600F73FEE /* ReadNoteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadNoteVC.swift; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 			children = (
 				C43F3AEB24B581B0007A52E6 /* Constants.swift */,
 				C4850B9A251E42D900786BFF /* HelperMethod.swift */,
+				C4A3AFAB251F8AA600A95EFE /* KeyboardLayoutConstraint.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 				C43F3AF124B58F4D007A52E6 /* NotesListCell.swift in Sources */,
 				C4BED5E924B78B4600F73FEE /* ReadNoteVC.swift in Sources */,
 				C43F3AE624B4BE7D007A52E6 /* RegistrationVC.swift in Sources */,
+				C4A3AFAC251F8AA600A95EFE /* KeyboardLayoutConstraint.swift in Sources */,
 				C4BED5E324B77D4D00F73FEE /* Note.swift in Sources */,
 				C43F3AE424B4BE67007A52E6 /* TitleVC.swift in Sources */,
 				C4BED5E724B78B3000F73FEE /* AddNewNoteVC.swift in Sources */,
