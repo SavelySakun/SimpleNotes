@@ -514,7 +514,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TdA-dJ-aNW" userLabel="Email Field">
                                         <rect key="frame" x="0.0" y="0.0" width="331.33333333333331" height="55.333333333333336"/>
                                         <subviews>
-                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="sava@1.ru" placeholder="e-mail" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Jrb-no-cHa">
+                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="e-mail" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Jrb-no-cHa">
                                                 <rect key="frame" x="15" y="8.0000000000000568" width="301.33333333333331" height="39.333333333333336"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                 <textInputTraits key="textInputTraits"/>
@@ -563,7 +563,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QFU-Pe-J2q" userLabel="Password Field">
                                         <rect key="frame" x="0.0" y="65.333333333333314" width="331.33333333333331" height="55.333333333333343"/>
                                         <subviews>
-                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="123456" placeholder="password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tJ1-wq-vi1" userLabel="password">
+                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tJ1-wq-vi1" userLabel="password">
                                                 <rect key="frame" x="15" y="8" width="301.33333333333331" height="39.333333333333336"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                 <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
@@ -1000,7 +1000,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="Klt-SC-WFe"/>
-        <segue reference="EqW-aM-9iV"/>
+        <segue reference="uFF-cH-hcV"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="Girl with flowers" width="242" height="287"/>
