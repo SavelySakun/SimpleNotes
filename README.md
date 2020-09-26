@@ -4,8 +4,8 @@
 Стек используемых технологий: 
 - UIKit, Storyboards.
 - Firebase Authentication для регистрации.
-- Firebase Cloud Firestore для облачного хранилища заметок.
-- Архитектура MVC.
+- Firebase Cloud Firestore для облачного хранилища заметок.
+- Архитектура MVC
 
 
 ##  To-do list
